@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryptex - Wallet Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0a0c10;
+      color: white;
+    }
+
+    /* Header */
+    .header {
+      background: #12141c;
+      padding: 20px 40px;
+      border-bottom: 1px solid #2a2d3a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .logo span:first-child {
+      font-size: 28px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logout-btn {
+      background: #2d313e;
+      padding: 8px 20px;
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #ef4444;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      margin-bottom: 40px;
+    }
+
+    .welcome-section h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-section p {
+      color: #8a8f9e;
+    }
+
+    /* Total Balance Card */
+    .balance-card {
+      background: linear-gradient(135deg, #1a2a3a 0%, #0f172a 100%);
+      border-radius: 32px;
+      padding: 32px;
+      margin-bottom: 40px;
+      border: 1px solid #2d313e;
+    }
+
+    .balance-header {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .balance-label {
+      color: #8a8f9e;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .hide-btn {
+      background: #2d313e;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+      font-family: inherit;
+    }
+
+    .hide-btn:hover {
+      background: #3b82f6;
+    }
+
+    .balance-amount {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .balance-amount.hidden {
+      filter: blur(8px);
+      user-select: none;
+    }
+
+    .balance-sub {
+      color: #22c55e;
+      font-size: 14px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: #12141c;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid #2a2d3a;
+    }
+
+    .stat-label {
+      color: #8a8f9e;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .stat-value.hidden {
+      filter: blur(6px);
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Currency Table */
+    .currency-table {
+      background: #12141c;
+      border-radius: 24px;
+      border: 1px solid #2a2d3a;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      padding: 20px;
+      color: #8a8f9e;
+      font-weight: 500;
+      font-size: 14px;
+      border-bottom: 1px solid #2a2d3a;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2a2d3a;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .coin-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .coin-name {
+      font-weight: 600;
+    }
+
+    .coin-symbol {
+      font-size: 12px;
+      color: #8a8f9e;
+    }
+
+    .amount {
+      font-weight: 600;
+    }
+
+    .amount.hidden, .value.hidden {
+      filter: blur(5px);
+    }
+
+    .value {
+      font-weight: 600;
+      color: #22c55e;
+    }
+
+    .value.negative {
+      color: #ef4444;
+    }
+
+    /* Toggle Button for individual rows */
+    .toggle-row-btn {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .toggle-row-btn:hover {
+      background: #2d313e;
+    }
+
+    /* Action Buttons */
+    .action-btns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-buy {
+      background: #22c55e;
+      color: white;
+    }
+
+    .btn-buy:hover {
+      background: #16a34a;
+    }
+
+    .btn-sell {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-sell:hover {
+      background: #dc2626;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 30px;
+      color: #5a5f73;
+      font-size: 13px;
+      border-top: 1px solid #2a2d3a;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 15px 20px;
+      }
+      .balance-amount {
+        font-size: 32px;
+      }
+      th, td {
+        padding: 12px;
+      }
+      .action-btns {
+        flex-direction: column;
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <span>Cryptex</span>
+    </div>
+    <div class="user-info">
+      <span>Welcome! <span id="usernameDisplay">User</span></span>
+      <a href="main.html" class="logout-btn" onclick="logout()">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="welcome-section">
+      <h1>Your Wallet Dashboard</h1>
+      <p>Manage and track your cryptocurrency portfolio</p>
+    </div>
+
+    <!-- Total Balance Card with Hide/Unhide -->
+    <div class="currency-selector" style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+        <span style="color: #8a8f9e;">Display Currency:</span>
+        <select id="currencySelect" onchange="changeCurrency()"
+            style="background: #1a1d27; border: 1px solid #2d313e; color: white; padding: 8px 16px; border-radius: 12px; font-family: inherit; cursor: pointer;">
+            <option value="USD">USD ($)</option>
+            <option value="IDR">IDR (Rp)</option>
+        </select>
+    </div>          
+    
+    <div class="balance-card">
+      <div class="balance-header">
+        <span class="balance-label">TOTAL BALANCE (USD)</span>
+        <button class="hide-btn" id="toggleBalanceBtn" onclick="toggleTotalBalance()">Hide</button>
+      </div>
+      <div class="balance-amount" id="totalBalance">$124,582.50</div>
+      <div class="balance-sub">↑ +5.42% from last month</div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">24h Volume</div>
+        <div class="stat-value" id="volumeValue">$12,450.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Assets</div>
+        <div class="stat-value" id="assetCount">8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Profit/Loss</div>
+        <div class="stat-value" id="pnlValue" style="color: #22c55e;">+$5,230.00</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">
+        Your Crypto Assets
+    </h2>
+
+    <!-- Currency Table with Hide/Unhide per row -->
+    <div class="currency-table">
+       <table>
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Amount</th>
+            <th>Current Value (USD)</th>
+            <th>24h Change</th>
+            <th>Actions</th>
+           </tr>
+        </thead>
+        <tbody id="currencyTableBody">
+          <!-- Data will be populated by JavaScript -->
+        </tbody>
+       </table>
+    </div>
+
+    <div class="footer">
+      <p>© 2024 Cryptex - Secure Digital Asset Management | Prices are updated in real-time</p>
+    </div>
+  </div>
+
+  <script>
+    // Currency data
+    const currencies = [
+      { name: 'Bitcoin', symbol: 'BTC', icon: '₿', amount: 1.85, value: 56800, change: '+2.45%', changePositive: true },
+      { name: 'Ethereum', symbol: 'ETH', icon: 'Ξ', amount: 12.5, value: 3120, change: '+5.12%', changePositive: true },
+      { name: 'Solana', symbol: 'SOL', icon: '◎', amount: 245.8, value: 98.50, change: '-1.23%', changePositive: false },
+      { name: 'Cardano', symbol: 'ADA', icon: '₳', amount: 5000, value: 0.45, change: '+0.89%', changePositive: true },
+      { name: 'Ripple', symbol: 'XRP', icon: 'X', amount: 3200, value: 0.62, change: '-0.45%', changePositive: false },
+      { name: 'Dogecoin', symbol: 'DOGE', icon: 'Ð', amount: 15000, value: 0.12, change: '+8.32%', changePositive: true },
+      { name: 'Polkadot', symbol: 'DOT', icon: '●', amount: 420, value: 7.85, change: '-2.15%', changePositive: false },
+      { name: 'Avalanche', symbol: 'AVAX', icon: '▲', amount: 185, value: 34.20, change: '+3.67%', changePositive: true }
+    ];
+
+    // State for hiding balances
+    let totalBalanceHidden = false;
+    let rowHiddenStates = {};
+
+    // Function to format currency
+    function formatCurrency(value) {
+      return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Calculate total balance
+    function calculateTotalBalance() {
+      let total = 0;
+      currencies.forEach(currency => {
+        total += currency.amount * currency.value;
+      });
+      return total;
+    }
+
+    // Update total balance display
+    function updateTotalBalance() {
+      const totalBalanceEl = document.getElementById('totalBalance');
+      const total = calculateTotalBalance();
+      if (totalBalanceHidden) {
+        totalBalanceEl.textContent = '••••••••';
+        totalBalanceEl.classList.add('hidden');
+      } else {
+        totalBalanceEl.textContent = formatCurrency(total);
+        totalBalanceEl.classList.remove('hidden');
+      }
+    }
+
+    // Toggle total balance
+    function toggleTotalBalance() {
+      totalBalanceHidden = !totalBalanceHidden;
+      const btn = document.getElementById('toggleBalanceBtn');
+      if (totalBalanceHidden) {
+        btn.innerHTML = 'Unhide';
+      } else {
+        btn.innerHTML = 'Hide';
+      }
+      updateTotalBalance();
+      renderTable(); // Re-render table to update all row hide states
+    }
+
+    // Toggle individual row balance
+    function toggleRowBalance(coinSymbol) {
+      rowHiddenStates[coinSymbol] = !rowHiddenStates[coinSymbol];
+      renderTable();
+    }
+
+    // Render currency table
+    function renderTable() {
+      const tbody = document.getElementById('currencyTableBody');
+      tbody.innerHTML = '';
+      
+      currencies.forEach(currency => {
+        const totalValue = currency.amount * currency.value;
+        const isHidden = rowHiddenStates[currency.symbol] || false;
+        
+        const row = document.createElement('tr');
+        
+        // Coin column
+        row.innerHTML = `
+          <td>
+            <div class="coin-cell">
+              <div class="coin-icon">${currency.icon}</div>
+              <div>
+                <div class="coin-name">${currency.name}</div>
+                <div class="coin-symbol">${currency.symbol}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="amount ${isHidden ? 'hidden' : ''}">${isHidden ? '••••' : currency.amount.toLocaleString()} ${currency.symbol}</div>
+            ${!isHidden ? `<button class="toggle-row-btn" onclick="toggleRowBalance('${currency.symbol}')">Hide</button>` : `<button class="toggle-row-btn" onclick="toggleRowBalance('${currency.symbol}')">👁️ Show</button>`}
+          </td>
+          <td>
+            <div class="value ${isHidden ? 'hidden' : ''}">${isHidden ? '••••••' : formatCurrency(totalValue)}</div>
+          </td>
+          <td class="${currency.changePositive ? 'value' : 'value negative'}" style="${currency.changePositive ? 'color: #22c55e' : 'color: #ef4444'}">
+            ${currency.change}
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-buy" onclick="buyAsset('${currency.symbol}')">Buy</button>
+              <button class="btn-sm btn-sell" onclick="sellAsset('${currency.symbol}')">Sell</button>
+            </div>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+      
+      // Update quick stats with hide state
+      updateQuickStats();
+    }
+    
+    // Update quick stats
+    function updateQuickStats() {
+      const volumeEl = document.getElementById('volumeValue');
+      const assetCountEl = document.getElementById('assetCount');
+      const pnlEl = document.getElementById('pnlValue');
+      
+      if (totalBalanceHidden) {
+        volumeEl.classList.add('hidden');
+        pnlEl.classList.add('hidden');
+        volumeEl.textContent = '••••••';
+        pnlEl.textContent = '••••••';
+      } else {
+        volumeEl.classList.remove('hidden');
+        pnlEl.classList.remove('hidden');
+        volumeEl.textContent = formatCurrency(12450);
+        pnlEl.textContent = '+$5,230.00';
+        pnlEl.style.color = '#22c55e';
+      }
+      assetCountEl.textContent = currencies.length;
+      if (!totalBalanceHidden) {
+        assetCountEl.classList.remove('hidden');
+      } else {
+        assetCountEl.classList.add('hidden');
+      }
+    }
+
+    // Buy action
+    function buyAsset(symbol) {
+      alert(`🟢 Buy ${symbol}\n\nThis would open the trading interface for ${symbol}.\nFeature coming soon!`);
+    }
+
+    // Sell action
+    function sellAsset(symbol) {
+      alert(`🔴 Sell ${symbol}\n\nThis would open the selling interface for ${symbol}.\nFeature coming soon!`);
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+    }
+
+    // Set username from login
+    function setUsername() {
+      const usernameDisplay = document.getElementById('usernameDisplay');
+      // You can customize this or get from localStorage
+      usernameDisplay.textContent = 'Demo User';
+    }
+
+    // Check if user is logged in
+    function checkAuth() {
+      if (localStorage.getItem('isLoggedIn') !== 'true') {
+        window.location.href = 'main.html';
+      }
+    }
+
+    // Initialize dashboard
+    function init() {
+      checkAuth();
+      setUsername();
+      updateTotalBalance();
+      renderTable();
+    }
+
+    // Make functions global for onclick handlers
+    window.toggleTotalBalance = toggleTotalBalance;
+    window.toggleRowBalance = toggleRowBalance;
+    window.buyAsset = buyAsset;
+    window.sellAsset = sellAsset;
+    window.logout = logout;
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
